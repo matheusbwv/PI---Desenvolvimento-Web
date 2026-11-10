@@ -1,0 +1,19 @@
+# Dependências e build
+node_modules/
+dist/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Configurações locais
+.claude/
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.local
+
+# Cache do TypeScript
+*.tsbuildinfo

@@ -1,0 +1,93 @@
+@import 'tailwindcss';
+
+/* Cores e fonte extraídas do Figma do SESFA */
+@theme {
+  --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --color-primary: #1565d8;
+  --color-primary-hover: #1257bd;
+  --color-primary-soft: #e6eefb;
+  --color-brand: #0f3c8c;
+
+  --color-ink: #16233b;
+  --color-muted: #64748b;
+  --color-icon: #475569;
+  --color-placeholder: #94a3b8;
+  --color-line: #e3e8f0;
+  --color-line-strong: #b7c3d6;
+  --color-page: #f4f7fb;
+  --color-subtle: #f8fafc;
+
+  --color-success: #1f7a2e;
+  --color-success-soft: #ddf3d8;
+  --color-danger: #c62828;
+  --color-danger-soft: #fde2e2;
+  --color-warning: #b45309;
+  --color-warning-soft: #ffebd6;
+  --color-purple: #6b35b8;
+  --color-purple-soft: #ede4fb;
+  --color-neutral-soft: #eef1f6;
+
+  --color-chart-blue: #1565d8;
+  --color-chart-purple: #8b5cf6;
+  --color-chart-green: #10b981;
+  --color-chart-orange: #f59e0b;
+  --color-chart-gray: #cbd5e1;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-page font-sans text-[14px] text-ink;
+  }
+
+  ::placeholder {
+    color: var(--color-placeholder);
+    opacity: 1;
+  }
+
+  /* Ícone do calendário em campos de data com a cor do sistema */
+  input[type='date']::-webkit-calendar-picker-indicator,
+  input[type='time']::-webkit-calendar-picker-indicator {
+    opacity: 0.55;
+    cursor: pointer;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+/* Animações usadas pelos menus e janelas (Radix) */
+@keyframes surgir {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animar-surgir {
+  animation: surgir 140ms ease-out;
+}
+
+.animar-aparecer {
+  animation: aparecer 140ms ease-out;
+}
