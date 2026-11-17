@@ -1,9 +1,7 @@
 import { clsx } from 'clsx';
 import {
-  CalendarDays,
   ChartColumn,
   ChartPie,
-  ClipboardCheck,
   FileText,
   FolderOpen,
   House,
@@ -34,8 +32,6 @@ const ITENS: ItemMenu[] = [
   { para: '/', rotulo: 'Início', icone: House },
   { para: '/membros', rotulo: 'Membros', icone: UserRound, modulo: 'membros' },
   { para: '/grupos', rotulo: 'Grupos', icone: UsersRound, modulo: 'grupos' },
-  { para: '/atividades', rotulo: 'Atividades', icone: CalendarDays, modulo: 'atividades' },
-  { para: '/inscricoes', rotulo: 'Inscrições', icone: ClipboardCheck, modulo: 'inscricoes' },
   { para: '/comunicados', rotulo: 'Comunicados', icone: Megaphone, modulo: 'comunicados', tambem: ['/notificacoes'] },
   { para: '/demandas', rotulo: 'Demandas', icone: ListTodo, modulo: 'demandas' },
   {
