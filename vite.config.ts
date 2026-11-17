@@ -12,5 +12,9 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    // Em desenvolvimento, as chamadas para /api vão para o servidor Node (npm run dev:api).
+    proxy: {
+      '/api': `http://localhost:${process.env.SESFA_PORTA ?? 3333}`,
+    },
   },
 });

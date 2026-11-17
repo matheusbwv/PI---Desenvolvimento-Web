@@ -177,7 +177,7 @@ export interface Documento {
   enviadoPor: string;
   data: string;
   tamanho: number;
-  /** true quando o arquivo foi enviado pelo sistema e está salvo no navegador. */
+  /** true quando o arquivo foi enviado e está guardado no servidor. */
   temArquivo: boolean;
 }
 
@@ -192,4 +192,19 @@ export interface RelatorioGerado {
   formato: FormatoRelatorio;
   geradoPor: string;
   geradoEm: string;
+}
+
+/** Tudo o que a API devolve em GET /api/dados. */
+export interface Dados {
+  membros: Membro[];
+  grupos: Grupo[];
+  atividades: Atividade[];
+  inscricoes: Inscricao[];
+  comunicados: Comunicado[];
+  notificacoes: Notificacao[];
+  demandas: Demanda[];
+  usuarios: Usuario[];
+  perfis: Perfil[];
+  documentos: Documento[];
+  relatorios: RelatorioGerado[];
 }

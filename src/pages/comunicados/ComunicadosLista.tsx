@@ -63,8 +63,7 @@ export default function ComunicadosLista() {
       confirmar: 'Excluir',
       perigo: true,
     });
-    if (!ok) return;
-    excluir(id);
+    if (!ok || !(await excluir(id))) return;
     toast.success('Comunicado excluído.');
   };
 
@@ -146,9 +145,8 @@ export default function ComunicadosLista() {
                         rotulo: 'Publicar agora',
                         icone: Send,
                         oculto: !podeEditar || c.situacao === 'Publicado',
-                        aoClicar: () => {
-                          publicar(c.id);
-                          toast.success('Comunicado publicado.');
+                        aoClicar: async () => {
+                          if (await publicar(c.id)) toast.success('Comunicado publicado.');
                         },
                       },
                       { rotulo: 'Excluir', icone: Trash2, perigo: true, oculto: !podeExcluir, aoClicar: () => pedirExclusao(c.id, c.titulo) },

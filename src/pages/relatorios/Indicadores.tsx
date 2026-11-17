@@ -8,7 +8,7 @@ import { Botao } from '@/components/ui/Botao';
 import { CabecalhoPagina } from '@/components/ui/CabecalhoPagina';
 import { CartaoComTitulo, CartaoNumero } from '@/components/ui/Cartao';
 import { MenuOpcoes } from '@/components/ui/Menus';
-import type { Dados } from '@/data/exemplo';
+import type { Dados } from '@/types';
 import {
   formatarMesAno,
   formatarMesCurto,

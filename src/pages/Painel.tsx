@@ -7,6 +7,12 @@ import { formatarDiaMes, hojeISO, limitesDoPeriodo, periodoAtual, somarMeses, te
 import { origemAtividade, proximasAtividades, tomAtividade } from '@/lib/regras';
 import { useDados } from '@/store/dados';
 
+/** Texto de comparação com o mês anterior (sem registros no mês anterior não há percentual). */
+function comparacao(variacao: string): string {
+  if (variacao === 'novo' || variacao === '—') return 'Sem registros no mês anterior';
+  return `${variacao} em relação ao mês anterior`;
+}
+
 export default function Painel() {
   const membros = useDados((s) => s.membros);
   const grupos = useDados((s) => s.grupos);
@@ -59,12 +65,14 @@ export default function Painel() {
         <CartaoNumero
           rotulo="Membros ativos"
           valor={numeros.membrosAtivos}
-          detalhe={`${numeros.variacaoMembros.texto} em relação ao mês anterior`}
+          detalhe={comparacao(numeros.variacaoMembros.texto)}
         />
         <CartaoNumero
           rotulo="Grupos comunitários"
           valor={numeros.grupos}
-          detalhe={numeros.novosGrupos > 0 ? `+${numeros.novosGrupos} novos grupos` : 'Nenhum grupo novo'}
+          detalhe={
+            numeros.novosGrupos > 0 ? `+${numeros.novosGrupos} ${numeros.novosGrupos === 1 ? 'novo grupo' : 'novos grupos'}` : 'Nenhum grupo novo'
+          }
         />
         <CartaoNumero
           rotulo="Atividades e eventos"
@@ -74,7 +82,7 @@ export default function Painel() {
         <CartaoNumero
           rotulo="Inscrições ativas"
           valor={numeros.inscricoesAtivas}
-          detalhe={`${numeros.variacaoInscricoes.texto} em relação ao mês anterior`}
+          detalhe={comparacao(numeros.variacaoInscricoes.texto)}
         />
       </div>
 
@@ -127,7 +135,9 @@ export default function Painel() {
                 <li key={n.id}>
                   <Link
                     to={n.link}
-                    onClick={() => marcarComoLida(n.id)}
+                    onClick={() => {
+                      if (!n.lida) void marcarComoLida(n.id);
+                    }}
                     className="-mx-2 block rounded-md px-2 py-3.5 hover:bg-subtle"
                   >
                     <p className="flex items-center gap-2 text-[14.5px] text-ink">

@@ -47,8 +47,7 @@ export default function MembrosLista() {
       confirmar: 'Excluir',
       perigo: true,
     });
-    if (!ok) return;
-    excluir(id);
+    if (!ok || !(await excluir(id))) return;
     toast.success('Membro excluído.');
   };
 
@@ -121,9 +120,8 @@ export default function MembrosLista() {
                       rotulo: m.situacao === 'Ativo' ? 'Inativar' : 'Reativar',
                       icone: Power,
                       oculto: !podeEditar,
-                      aoClicar: () => {
-                        alternarSituacao(m.id);
-                        toast.success(m.situacao === 'Ativo' ? 'Membro inativado.' : 'Membro reativado.');
+                      aoClicar: async () => {
+                        if (await alternarSituacao(m.id)) toast.success(m.situacao === 'Ativo' ? 'Membro inativado.' : 'Membro reativado.');
                       },
                     },
                     { rotulo: 'Excluir', icone: Trash2, perigo: true, oculto: !podeExcluir, aoClicar: () => pedirExclusao(m.id, m.nome) },

@@ -44,8 +44,7 @@ export default function DemandaDetalhes() {
       confirmar: 'Excluir',
       perigo: true,
     });
-    if (!ok) return;
-    excluirTarefa(demanda.id, tarefa.id);
+    if (!ok || !(await excluirTarefa(demanda.id, tarefa.id))) return;
     toast.success('Tarefa excluída.');
   };
 
@@ -217,9 +216,9 @@ function JanelaTarefa({
   const [situacao, setSituacao] = useState<SituacaoTarefa>(tarefa?.situacao ?? 'Pendente');
   const [erro, setErro] = useState('');
 
-  const salvar = () => {
+  const salvar = async () => {
     if (titulo.trim().length < 3) return setErro('Informe o título da tarefa (mínimo de 3 letras).');
-    salvarTarefa(demandaId, { titulo: titulo.trim(), responsavelId, prazo, situacao }, tarefa?.id);
+    if (!(await salvarTarefa(demandaId, { titulo: titulo.trim(), responsavelId, prazo, situacao }, tarefa?.id))) return;
     toast.success(tarefa ? 'Tarefa atualizada.' : 'Tarefa adicionada.');
     aoMudar(false);
     if (!tarefa) {

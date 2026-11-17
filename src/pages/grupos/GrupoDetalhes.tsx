@@ -63,8 +63,9 @@ export default function GrupoDetalhes() {
       });
       if (!ok) return;
     }
-    alternarSituacao(grupo.id);
-    toast.success(grupo.situacao === 'Ativo' ? 'Grupo desativado.' : 'Grupo reativado.');
+    const estavaAtivo = grupo.situacao === 'Ativo';
+    if (!(await alternarSituacao(grupo.id))) return;
+    toast.success(estavaAtivo ? 'Grupo desativado.' : 'Grupo reativado.');
   };
 
   return (
@@ -166,9 +167,8 @@ export default function GrupoDetalhes() {
                           icone: UserMinus,
                           perigo: true,
                           oculto: !podeEditar,
-                          aoClicar: () => {
-                            removerMembro(grupo.id, m.id);
-                            toast.success(`${m.nome} foi removido(a) do grupo.`);
+                          aoClicar: async () => {
+                            if (await removerMembro(grupo.id, m.id)) toast.success(`${m.nome} foi removido(a) do grupo.`);
                           },
                         },
                       ]}
@@ -310,8 +310,8 @@ function JanelaAdicionarMembros({
           </Botao>
           <Botao
             disabled={marcados.length === 0}
-            onClick={() => {
-              adicionar(grupoId, marcados);
+            onClick={async () => {
+              if (!(await adicionar(grupoId, marcados))) return;
               toast.success(`${marcados.length} membro(s) adicionado(s) ao grupo.`);
               fechar(false);
             }}

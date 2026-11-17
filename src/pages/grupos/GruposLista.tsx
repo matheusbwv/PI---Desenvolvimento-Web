@@ -49,8 +49,7 @@ export default function GruposLista() {
       confirmar: 'Excluir',
       perigo: true,
     });
-    if (!ok) return;
-    excluir(id);
+    if (!ok || !(await excluir(id))) return;
     toast.success('Grupo excluído.');
   };
 
@@ -130,9 +129,8 @@ export default function GruposLista() {
                       rotulo: g.situacao === 'Ativo' ? 'Desativar' : 'Reativar',
                       icone: Power,
                       oculto: !podeEditar,
-                      aoClicar: () => {
-                        alternarSituacao(g.id);
-                        toast.success(g.situacao === 'Ativo' ? 'Grupo desativado.' : 'Grupo reativado.');
+                      aoClicar: async () => {
+                        if (await alternarSituacao(g.id)) toast.success(g.situacao === 'Ativo' ? 'Grupo desativado.' : 'Grupo reativado.');
                       },
                     },
                     { rotulo: 'Excluir', icone: Trash2, perigo: true, oculto: !podeExcluir, aoClicar: () => pedirExclusao(g.id, g.nome) },

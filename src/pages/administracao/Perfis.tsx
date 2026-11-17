@@ -17,17 +17,20 @@ export default function Perfis() {
   const perfisSalvos = useDados((s) => s.perfis);
   const usuarios = useDados((s) => s.usuarios);
   const salvarPerfis = useDados((s) => s.salvarPerfis);
-  const [rascunho, setRascunho] = useState<Perfil[]>(perfisSalvos);
+  // Só vira rascunho depois que alguém marca algo; até lá a tela mostra o que está no servidor
+  // (assim ela acompanha os dados quando eles são atualizados).
+  const [editado, setEditado] = useState<Perfil[] | null>(null);
+  const rascunho = editado ?? perfisSalvos;
   const [selecionado, setSelecionado] = useState('p-coord');
 
-  const alterado = JSON.stringify(rascunho) !== JSON.stringify(perfisSalvos);
+  const alterado = editado !== null && JSON.stringify(editado) !== JSON.stringify(perfisSalvos);
   const bloqueio = useBlocker(alterado);
   const perfil = rascunho.find((p) => p.id === selecionado) ?? rascunho[0];
   const travado = perfil.id === 'p-admin';
 
   const marcar = (modulo: Modulo, acao: Acao, valor: boolean) =>
-    setRascunho((lista) =>
-      lista.map((p) => {
+    setEditado((lista) =>
+      (lista ?? perfisSalvos).map((p) => {
         if (p.id !== perfil.id) return p;
         const linha = { ...p.permissoes[modulo], [acao]: valor };
         // Sem "Visualizar" não faz sentido criar/editar/excluir; e qualquer ação exige visualizar.
@@ -37,8 +40,9 @@ export default function Perfis() {
       }),
     );
 
-  const salvar = () => {
-    salvarPerfis(rascunho);
+  const salvar = async () => {
+    if (!(await salvarPerfis(rascunho))) return;
+    setEditado(null);
     toast.success('Permissões salvas.');
   };
 
@@ -49,7 +53,7 @@ export default function Perfis() {
         subtitulo="Defina o que cada perfil pode fazer em cada módulo."
         acoes={
           <>
-            <Botao variante="secundario" disabled={!alterado} onClick={() => setRascunho(perfisSalvos)}>
+            <Botao variante="secundario" disabled={!alterado} onClick={() => setEditado(null)}>
               Cancelar
             </Botao>
             <Botao disabled={!alterado} onClick={salvar}>

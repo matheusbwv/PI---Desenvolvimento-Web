@@ -55,8 +55,9 @@ export default function DemandaFormulario() {
   if (id && !demanda) return <NaoEncontrada texto="Esta demanda não existe ou foi excluída." />;
 
   const voltar = () => navegar(id ? `/demandas/${id}` : '/demandas');
-  const enviar = (dados: Formulario) => {
-    const salva = salvar({ ...dados, prioridade: (dados.prioridade || 'Média') as Prioridade }, id);
+  const enviar = async (dados: Formulario) => {
+    const salva = await salvar({ ...dados, prioridade: (dados.prioridade || 'Média') as Prioridade }, id);
+    if (!salva) return;
     toast.success(id ? 'Alterações salvas.' : `Demanda ${salva.codigo} cadastrada.`);
     navegar(`/demandas/${salva.id}`);
   };

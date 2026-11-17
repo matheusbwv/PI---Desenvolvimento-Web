@@ -75,7 +75,7 @@ export default function AtividadeFormulario() {
   const gruposAtivos = grupos.filter((g) => g.situacao === 'Ativo' || g.id === atividade?.grupoId);
 
   const voltar = () => navegar(id ? `/atividades/${id}` : '/atividades');
-  const enviar = (dados: Formulario) => {
+  const enviar = async (dados: Formulario) => {
     if (atividade) {
       const confirmadas = resumoVagas(atividade, inscricoes).confirmadas;
       if (dados.vagas < confirmadas) {
@@ -83,7 +83,8 @@ export default function AtividadeFormulario() {
         return;
       }
     }
-    const salva = salvar({ ...dados, grupoId: dados.tipo === 'Atividade do grupo' ? dados.grupoId : '' }, id);
+    const salva = await salvar({ ...dados, grupoId: dados.tipo === 'Atividade do grupo' ? dados.grupoId : '' }, id);
+    if (!salva) return;
     toast.success(id ? 'Alterações salvas.' : 'Atividade cadastrada com sucesso.');
     navegar(`/atividades/${salva.id}`);
   };

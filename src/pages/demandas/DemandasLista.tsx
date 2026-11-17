@@ -68,8 +68,7 @@ export default function DemandasLista() {
       confirmar: 'Excluir',
       perigo: true,
     });
-    if (!ok) return;
-    excluir(id);
+    if (!ok || !(await excluir(id))) return;
     toast.success('Demanda excluída.');
   };
 

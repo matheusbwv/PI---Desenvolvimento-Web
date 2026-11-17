@@ -10,8 +10,9 @@ import { Janela, useConfirmar } from '@/components/ui/Janela';
 import { FiltroSelecao, MenuAcoes } from '@/components/ui/Menus';
 import { Selo } from '@/components/ui/Selo';
 import { LinhaVazia, Paginacao, Tabela, Td, Th, Tr, usePaginacao } from '@/components/ui/Tabela';
-import { apagarArquivo, baixarBlob, lerArquivo, salvarArquivo } from '@/lib/arquivos';
-import { contemTexto, formatarData, formatarTamanho, gerarId } from '@/lib/formatacao';
+import { baixarDaApi, mensagemDoErro } from '@/lib/api';
+import { baixarBlob } from '@/lib/arquivos';
+import { contemTexto, formatarData, formatarTamanho } from '@/lib/formatacao';
 import { TAMANHO_MAXIMO_ARQUIVO } from '@/lib/opcoes';
 import { tomArquivo } from '@/lib/regras';
 import { usePode } from '@/store/acesso';
@@ -68,19 +69,20 @@ export default function Documentos() {
   };
 
   const baixar = async (d: Documento) => {
-    const blob = d.temArquivo ? await lerArquivo(d.id) : undefined;
-    if (!blob) {
-      toast.info('Este é um documento de exemplo, sem arquivo anexado. Envie um arquivo para testar o download.');
+    if (!d.temArquivo) {
+      toast.error('Este documento não tem arquivo anexado.');
       return;
     }
-    baixarBlob(blob, `${d.nome}.${d.tipo.toLowerCase()}`);
+    try {
+      baixarBlob(await baixarDaApi(`/documentos/${d.id}/arquivo`), `${d.nome}.${d.tipo.toLowerCase()}`);
+    } catch (erro) {
+      toast.error(mensagemDoErro(erro));
+    }
   };
 
   const pedirExclusao = async (d: Documento) => {
     const ok = await confirmar({ titulo: 'Excluir documento?', mensagem: `"${d.nome}" será excluído.`, confirmar: 'Excluir', perigo: true });
-    if (!ok) return;
-    excluir(d.id);
-    await apagarArquivo(d.id);
+    if (!ok || !(await excluir(d.id))) return;
     toast.success('Documento excluído.');
   };
 
@@ -218,26 +220,16 @@ function JanelaEnvio({ arquivo, aoFechar }: { arquivo: File | null; aoFechar: ()
     setEnviando(true);
     const [tipoVinculo, idVinculo] = vinculo.split(':') as [VinculoDocumento['tipo'], string];
     const rotulo = opcoes.flatMap((o) => o.itens).find((i) => i.valor === vinculo)?.rotulo.replace(/ \(.*\)$/, '') ?? '';
-    const id = gerarId();
-    try {
-      await salvarArquivo(id, arquivo);
-      adicionar(
-        {
-          nome: nome.trim(),
-          tipo: EXTENSOES[arquivo.name.split('.').pop()!.toLowerCase()],
-          vinculo: { tipo: tipoVinculo, id: idVinculo, rotulo },
-          tamanho: arquivo.size,
-          temArquivo: true,
-        },
-        id,
-      );
-      toast.success('Documento enviado.');
-      aoFechar();
-    } catch {
-      toast.error('Não foi possível guardar o arquivo neste navegador.');
-    } finally {
-      setEnviando(false);
-    }
+    const enviado = await adicionar({
+      nome: nome.trim(),
+      tipo: EXTENSOES[arquivo.name.split('.').pop()!.toLowerCase()],
+      vinculo: { tipo: tipoVinculo, id: idVinculo, rotulo },
+      arquivo,
+    });
+    setEnviando(false);
+    if (!enviado) return;
+    toast.success('Documento enviado.');
+    aoFechar();
   };
 
   return (

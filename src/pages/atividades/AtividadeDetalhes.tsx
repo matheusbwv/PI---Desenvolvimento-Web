@@ -60,9 +60,8 @@ export default function AtividadeDetalhes() {
       perigo: true,
     });
     if (!ok) return;
-    excluir(atividade.id);
-    toast.success('Atividade excluída.');
     navegar('/atividades');
+    if (await excluir(atividade.id)) toast.success('Atividade excluída.');
   };
 
   const pedirCancelamento = async (inscricaoId: string, nome: string) => {
@@ -72,8 +71,7 @@ export default function AtividadeDetalhes() {
       confirmar: 'Cancelar inscrição',
       perigo: true,
     });
-    if (!ok) return;
-    cancelarInscricao(inscricaoId);
+    if (!ok || !(await cancelarInscricao(inscricaoId))) return;
     toast.success('Inscrição cancelada.');
   };
 
@@ -157,9 +155,8 @@ export default function AtividadeDetalhes() {
               <Botao
                 variante="secundario"
                 icone={ClipboardCheck}
-                onClick={() => {
-                  registrarPresenca(atividade.id);
-                  toast.success('Presença registrada com sucesso.');
+                onClick={async () => {
+                  if (await registrarPresenca(atividade.id)) toast.success('Presença registrada com sucesso.');
                 }}
               >
                 Registrar presença
@@ -256,8 +253,8 @@ export default function AtividadeDetalhes() {
                         icone={ArrowUpCircle}
                         disabled={vagas.livres === 0}
                         title={vagas.livres === 0 ? 'Não há vagas livres' : 'Confirmar inscrição'}
-                        onClick={() => {
-                          const r = promover(i.id);
+                        onClick={async () => {
+                          const r = await promover(i.id);
                           if (r.ok) toast.success(r.mensagem);
                           else toast.error(r.erro);
                         }}

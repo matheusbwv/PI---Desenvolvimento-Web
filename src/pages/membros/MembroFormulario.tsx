@@ -53,8 +53,8 @@ export default function MembroFormulario() {
 
   if (id && !membro) return <NaoEncontrada texto="Este membro não existe ou foi excluído." />;
 
-  const enviar = (dados: Formulario) => {
-    salvar({ ...dados, situacao: dados.situacao === 'Inativo' ? 'Inativo' : 'Ativo' }, id);
+  const enviar = async (dados: Formulario) => {
+    if (!(await salvar({ ...dados, situacao: dados.situacao === 'Inativo' ? 'Inativo' : 'Ativo' }, id))) return;
     toast.success(id ? 'Alterações salvas.' : 'Membro cadastrado com sucesso.');
     navegar('/membros');
   };

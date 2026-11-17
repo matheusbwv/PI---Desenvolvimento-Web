@@ -1,37 +1,16 @@
-import { Bell, LogOut, Menu as IconeMenu, RotateCcw } from 'lucide-react';
+import { Bell, LogOut, Menu as IconeMenu } from 'lucide-react';
 import { useNavigate } from 'react-router';
-import { toast } from 'sonner';
 import { estilosMenu, Menu } from '@/components/ui/Menus';
-import { useConfirmar } from '@/components/ui/Janela';
 import { iniciais } from '@/lib/formatacao';
-import { limparArquivos } from '@/lib/arquivos';
-import { usePerfilAtual, useUsuarioAtual } from '@/store/acesso';
+import { sair, usePerfilAtual, useUsuarioAtual } from '@/store/acesso';
 import { useDados } from '@/store/dados';
-import { useSessao } from '@/store/sessao';
 import { BuscaGlobal } from './BuscaGlobal';
 
 export function Topo({ aoAbrirMenu }: { aoAbrirMenu: () => void }) {
   const navegar = useNavigate();
-  const confirmar = useConfirmar();
   const usuario = useUsuarioAtual();
   const perfil = usePerfilAtual();
   const naoLidas = useDados((s) => s.notificacoes.filter((n) => !n.lida).length);
-  const restaurar = useDados((s) => s.restaurarExemplo);
-  const sair = useSessao((s) => s.sair);
-
-  const restaurarDados = async () => {
-    const ok = await confirmar({
-      titulo: 'Restaurar dados de exemplo?',
-      mensagem: 'Todos os cadastros feitos no navegador serão apagados e os dados de exemplo voltarão ao estado inicial.',
-      confirmar: 'Restaurar',
-      perigo: true,
-    });
-    if (!ok) return;
-    restaurar();
-    await limparArquivos();
-    toast.success('Dados de exemplo restaurados.');
-    navegar('/');
-  };
 
   return (
     <header className="sticky top-0 z-20 flex h-[66px] items-center gap-3 border-b border-line bg-white px-4 sm:px-8">
@@ -81,10 +60,6 @@ export function Topo({ aoAbrirMenu }: { aoAbrirMenu: () => void }) {
                 <p className="text-[12.5px] text-muted">{usuario?.email}</p>
               </div>
               <Menu.Separator className="my-1 h-px bg-line" />
-              <Menu.Item onSelect={restaurarDados} className={estilosMenu.itemMenu}>
-                <RotateCcw className="size-4 opacity-80" aria-hidden />
-                Restaurar dados de exemplo
-              </Menu.Item>
               <Menu.Item
                 onSelect={() => {
                   sair();

@@ -47,10 +47,10 @@ export function JanelaInscricao({
     }
   };
 
-  const confirmar = () => {
+  const confirmar = async () => {
     if (!escolhida) return setErro('Selecione a atividade.');
     if (!membroId) return setErro('Selecione o membro.');
-    const resultado = inscrever(escolhida.id, membroId);
+    const resultado = await inscrever(escolhida.id, membroId);
     if (!resultado.ok) return setErro(resultado.erro);
     if (resultado.mensagem?.includes('espera')) toast.warning(resultado.mensagem);
     else toast.success(resultado.mensagem ?? 'Inscrição realizada.');

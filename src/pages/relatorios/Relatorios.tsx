@@ -45,7 +45,7 @@ export default function Relatorios() {
   const gerar = async (tipo: TipoRelatorio) => {
     const ok = await gerarArquivo({ tipo, periodo, formato }, tipo);
     if (!ok) return;
-    registrar({ tipo, periodo, formato });
+    void registrar({ tipo, periodo, formato });
     toast.success(`Relatório de ${TITULO_RELATORIO[tipo].toLowerCase()} gerado em ${formato}.`);
   };
 

@@ -1,4 +1,4 @@
-import type { Dados } from '@/data/exemplo';
+import type { Dados } from '@/types';
 import type { FormatoRelatorio, TipoRelatorio } from '@/types';
 import { formatarData, formatarMesAno, limitesDoPeriodo, noPeriodo } from './formatacao';
 import { origemAtividade, resumoVagas, situacaoDemanda } from './regras';

@@ -81,8 +81,7 @@ export default function Inscricoes() {
       confirmar: 'Cancelar inscrição',
       perigo: true,
     });
-    if (!ok) return;
-    cancelar(id);
+    if (!ok || !(await cancelar(id))) return;
     toast.success('Inscrição cancelada.');
   };
 
@@ -180,8 +179,8 @@ export default function Inscricoes() {
                         rotulo: 'Promover para confirmada',
                         icone: ArrowUpCircle,
                         oculto: !podeEditar || i.situacao !== 'Lista de espera',
-                        aoClicar: () => {
-                          const r = promover(i.id);
+                        aoClicar: async () => {
+                          const r = await promover(i.id);
                           if (r.ok) toast.success(r.mensagem);
                           else toast.error(r.erro);
                         },

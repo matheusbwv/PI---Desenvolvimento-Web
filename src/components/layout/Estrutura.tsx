@@ -1,21 +1,43 @@
-import { ShieldX } from 'lucide-react';
-import { Suspense, useState, type ReactNode } from 'react';
+import { ServerOff, ShieldX } from 'lucide-react';
+import { Suspense, useEffect, useState, type ReactNode } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router';
-import { BotaoLink } from '@/components/ui/Botao';
-import { usePode, useUsuarioAtual } from '@/store/acesso';
+import { Botao, BotaoLink } from '@/components/ui/Botao';
+import { sair, usePode, useUsuarioAtual } from '@/store/acesso';
+import { useDados } from '@/store/dados';
+import { useSessao } from '@/store/sessao';
 import type { Acao, Modulo } from '@/types';
 import { MenuLateral } from './MenuLateral';
 import { Topo } from './Topo';
 
+/** Busca os dados no servidor ao entrar, ao voltar para a aba e a cada 30 segundos. */
+function useSincronizarDados(token: string | null) {
+  useEffect(() => {
+    if (!token) return;
+    const atualizar = () => void useDados.getState().carregar().catch(() => {});
+    if (!useDados.getState().carregado) atualizar();
+    const intervalo = window.setInterval(atualizar, 30_000);
+    window.addEventListener('focus', atualizar);
+    return () => {
+      window.clearInterval(intervalo);
+      window.removeEventListener('focus', atualizar);
+    };
+  }, [token]);
+}
+
 /** Estrutura das telas internas: menu lateral + cabeçalho + conteúdo. Exige login. */
 export function Estrutura() {
+  const token = useSessao((s) => s.token);
+  const carregado = useDados((s) => s.carregado);
+  const erroCarga = useDados((s) => s.erroCarga);
   const usuario = useUsuarioAtual();
   const local = useLocation();
   const [menuAberto, setMenuAberto] = useState(false);
+  useSincronizarDados(token);
 
-  if (!usuario || usuario.situacao === 'Inativo') {
-    return <Navigate to="/login" replace state={{ de: local.pathname }} />;
-  }
+  if (!token) return <Navigate to="/login" replace state={{ de: local.pathname }} />;
+  if (!carregado) return erroCarga ? <SemConexao mensagem={erroCarga} /> : <Carregando telaInteira />;
+  // Usuário apagado ou desativado no meio da sessão: sai (e o login aparece).
+  if (!usuario || usuario.situacao === 'Inativo') return <SessaoEncerrada />;
 
   return (
     <div className="min-h-screen bg-page">
@@ -32,10 +54,44 @@ export function Estrutura() {
   );
 }
 
-function Carregando() {
+function SessaoEncerrada() {
+  useEffect(() => sair(), []);
+  return null;
+}
+
+function Carregando({ telaInteira = false }: { telaInteira?: boolean }) {
   return (
-    <div className="flex h-64 items-center justify-center text-[14px] text-muted" role="status">
+    <div className={`flex items-center justify-center text-[14px] text-muted ${telaInteira ? 'min-h-screen bg-page' : 'h-64'}`} role="status">
       Carregando…
+    </div>
+  );
+}
+
+/** Quando o servidor (API) não responde. */
+function SemConexao({ mensagem }: { mensagem: string }) {
+  const [tentando, setTentando] = useState(false);
+  const tentarDeNovo = async () => {
+    setTentando(true);
+    await useDados.getState().carregar().catch(() => {});
+    setTentando(false);
+  };
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-page px-6">
+      <div className="max-w-md text-center">
+        <span className="mx-auto flex size-14 items-center justify-center rounded-full bg-warning-soft text-warning">
+          <ServerOff className="size-7" />
+        </span>
+        <h1 className="mt-4 text-[20px] font-bold text-ink">Sem conexão com o servidor</h1>
+        <p className="mt-2 text-[14px] text-muted">{mensagem}</p>
+        <div className="mt-6 flex justify-center gap-3">
+          <Botao variante="secundario" onClick={sair}>
+            Sair
+          </Botao>
+          <Botao onClick={tentarDeNovo} disabled={tentando}>
+            {tentando ? 'Tentando…' : 'Tentar de novo'}
+          </Botao>
+        </div>
+      </div>
     </div>
   );
 }

@@ -54,11 +54,12 @@ export default function ComunicadoFormulario() {
   const publicos = ['Todos os membros', 'Coordenadores', ...grupos.filter((g) => g.situacao === 'Ativo').map((g) => `Grupo ${g.nome}`)];
 
   const salvarComo = (situacao: SituacaoComunicado) =>
-    handleSubmit((dados) => {
-      salvar(
+    handleSubmit(async (dados) => {
+      const salvo = await salvar(
         { ...dados, categoria: (dados.categoria || 'Informativo') as CategoriaComunicado, situacao },
         id,
       );
+      if (!salvo) return;
       toast.success(situacao === 'Publicado' ? 'Comunicado publicado.' : 'Rascunho salvo.');
       navegar('/comunicados');
     });

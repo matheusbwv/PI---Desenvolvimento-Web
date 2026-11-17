@@ -50,8 +50,9 @@ export default function GrupoFormulario() {
   if (id && !grupo) return <NaoEncontrada texto="Este grupo não existe ou foi excluído." />;
 
   const voltar = () => navegar(id ? `/grupos/${id}` : '/grupos');
-  const enviar = (dados: Formulario) => {
-    const salvo = salvar({ ...dados, criadoEm: dados.criadoEm || hojeISO() }, id);
+  const enviar = async (dados: Formulario) => {
+    const salvo = await salvar({ ...dados, criadoEm: dados.criadoEm || hojeISO() }, id);
+    if (!salvo) return;
     toast.success(id ? 'Alterações salvas.' : 'Grupo cadastrado com sucesso.');
     navegar(`/grupos/${salvo.id}`);
   };

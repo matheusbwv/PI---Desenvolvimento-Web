@@ -58,8 +58,7 @@ export default function Usuarios() {
       confirmar: 'Excluir',
       perigo: true,
     });
-    if (!ok) return;
-    excluir(u.id);
+    if (!ok || !(await excluir(u.id))) return;
     toast.success('Usuário excluído.');
   };
 
@@ -126,9 +125,8 @@ export default function Usuarios() {
                         rotulo: u.situacao === 'Ativo' ? 'Desativar' : 'Reativar',
                         icone: Power,
                         oculto: ehVoce,
-                        aoClicar: () => {
-                          alternarSituacao(u.id);
-                          toast.success(u.situacao === 'Ativo' ? 'Usuário desativado.' : 'Usuário reativado.');
+                        aoClicar: async () => {
+                          if (await alternarSituacao(u.id)) toast.success(u.situacao === 'Ativo' ? 'Usuário desativado.' : 'Usuário reativado.');
                         },
                       },
                       { rotulo: 'Excluir', icone: Trash2, perigo: true, oculto: ehVoce, aoClicar: () => pedirExclusao(u) },
@@ -169,19 +167,26 @@ function JanelaUsuario({
   const [email, setEmail] = useState(usuario?.email ?? '');
   const [perfilId, setPerfilId] = useState(usuario?.perfilId ?? '');
   const [situacao, setSituacao] = useState<SituacaoCadastro>(usuario?.situacao ?? 'Ativo');
+  const [senha, setSenha] = useState('');
   const [erros, setErros] = useState<Record<string, string>>({});
+  const [salvando, setSalvando] = useState(false);
 
-  const enviar = () => {
+  const enviar = async () => {
     const novos: Record<string, string> = {};
     if (nome.trim().length < 3) novos.nome = 'Informe o nome (mínimo de 3 letras).';
     if (!/^\S+@\S+\.\S+$/.test(email.trim())) novos.email = 'Informe um e-mail válido.';
     if (!perfilId) novos.perfil = 'Selecione o perfil.';
+    if (!usuario && !senha) novos.senha = 'Defina a senha inicial.';
+    else if (senha && senha.length < 6) novos.senha = 'A senha precisa ter pelo menos 6 caracteres.';
     setErros(novos);
     if (Object.keys(novos).length) return;
-    const r = salvar({ nome: nome.trim(), email, perfilId, situacao }, usuario?.id);
-    if (!r.ok) return setErros({ email: r.erro });
-    toast.success(usuario ? 'Usuário atualizado.' : 'Usuário criado. Ele já pode entrar com a senha de demonstração.');
+    setSalvando(true);
+    const r = await salvar({ nome: nome.trim(), email, perfilId, situacao, senha }, usuario?.id);
+    setSalvando(false);
+    if (!r.ok) return setErros(/e-mail/i.test(r.erro) ? { email: r.erro } : { geral: r.erro });
+    toast.success(usuario ? 'Usuário atualizado.' : 'Usuário criado. Passe a senha inicial para a pessoa.');
     aoMudar(false);
+    setSenha('');
     if (!usuario) {
       setNome('');
       setEmail('');
@@ -204,11 +209,18 @@ function JanelaUsuario({
           <Botao variante="secundario" onClick={() => aoMudar(false)}>
             Cancelar
           </Botao>
-          <Botao onClick={enviar}>Salvar</Botao>
+          <Botao onClick={enviar} disabled={salvando}>
+            {salvando ? 'Salvando…' : 'Salvar'}
+          </Botao>
         </>
       }
     >
       <div className="space-y-4">
+        {erros.geral && (
+          <p role="alert" className="rounded-lg bg-danger-soft px-3.5 py-2.5 text-[13.5px] text-danger">
+            {erros.geral}
+          </p>
+        )}
         <Campo rotulo="Nome" obrigatorio htmlFor="usu-nome" erro={erros.nome}>
           <Entrada id="usu-nome" value={nome} aria-invalid={!!erros.nome} onChange={(e) => setNome(e.target.value)} placeholder="Nome completo" />
         </Campo>
@@ -247,6 +259,23 @@ function JanelaUsuario({
             </Selecao>
           </Campo>
         </div>
+        <Campo
+          rotulo={usuario ? 'Nova senha' : 'Senha inicial'}
+          obrigatorio={!usuario}
+          htmlFor="usu-senha"
+          erro={erros.senha}
+          dica={usuario ? 'Deixe em branco para manter a senha atual.' : 'Mínimo de 6 caracteres. O servidor guarda a senha criptografada.'}
+        >
+          <Entrada
+            id="usu-senha"
+            type="password"
+            autoComplete="new-password"
+            value={senha}
+            aria-invalid={!!erros.senha}
+            onChange={(e) => setSenha(e.target.value)}
+            placeholder={usuario ? '••••••' : 'Senha inicial'}
+          />
+        </Campo>
       </div>
     </Janela>
   );

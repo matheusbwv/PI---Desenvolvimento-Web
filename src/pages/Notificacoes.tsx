@@ -50,9 +50,8 @@ export default function Notificacoes() {
           <Botao
             variante="secundario"
             disabled={naoLidas === 0}
-            onClick={() => {
-              marcarTodas();
-              toast.success('Todas as notificações foram marcadas como lidas.');
+            onClick={async () => {
+              if (await marcarTodas()) toast.success('Todas as notificações foram marcadas como lidas.');
             }}
           >
             Marcar todas como lidas
@@ -81,7 +80,7 @@ export default function Notificacoes() {
                 <button
                   type="button"
                   onClick={() => {
-                    marcarComoLida(n.id);
+                    if (!n.lida) void marcarComoLida(n.id);
                     navegar(n.link);
                   }}
                   className={clsx(
