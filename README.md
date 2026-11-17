@@ -2,7 +2,7 @@
 
 Sistema web para gestão de comunidades: membros, grupos, agenda de atividades, inscrições e presença, comunicados, demandas, relatórios e controle de acesso por perfil.
 
-Projeto Integrador (PI) de **Desenvolvimento Web**, feito a partir do protótipo no Figma (as telas estão em [`docs/figma`](docs/figma)):
+Projeto Integrador (PI) de **Desenvolvimento Web**, feito a partir do protótipo no Figma:
 
 - **Front-end:** React + TypeScript (pasta `src/`)
 - **Back-end:** API REST em Node.js + Express, com banco de dados SQLite, senhas criptografadas (bcrypt) e login por token (JWT) (pasta `server/`)
