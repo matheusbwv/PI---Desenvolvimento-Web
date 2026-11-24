@@ -73,7 +73,7 @@ export function MenuLateral({ aberto, aoFechar }: { aberto: boolean; aoFechar: (
         )}
       >
         <div className="flex h-[66px] shrink-0 items-center justify-between px-5">
-          <Link to="/" onClick={aoFechar} aria-label="SESFA — página inicial">
+          <Link to="/" onClick={aoFechar} aria-label="Instituto Elo — página inicial">
             <Logo />
           </Link>
           <button

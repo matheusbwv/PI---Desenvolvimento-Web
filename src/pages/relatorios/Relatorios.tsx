@@ -32,7 +32,7 @@ export default function Relatorios() {
     setGerando(chave);
     try {
       const conteudo = montarRelatorio(r.tipo, r.periodo, useDados.getState());
-      await baixarRelatorio(conteudo, r.formato, `sesfa-${r.tipo}-${r.periodo}`);
+      await baixarRelatorio(conteudo, r.formato, `elo-${r.tipo}-${r.periodo}`);
       return true;
     } catch {
       toast.error('Não foi possível gerar o arquivo.');

@@ -80,7 +80,7 @@ export default function Login() {
               <PrimeiroAcesso aoConcluir={() => navegar('/', { replace: true })} />
             ) : (
               <>
-                <h2 className="text-[22px] font-bold tracking-tight text-ink">Bem-vindo(a) ao SESFA</h2>
+                <h2 className="text-[22px] font-bold tracking-tight text-ink">Bem-vindo(a) ao Instituto Elo</h2>
                 <p className="mt-1 text-[14px] text-muted">Entre com suas credenciais para acessar o sistema.</p>
 
                 <form onSubmit={handleSubmit(entrar)} noValidate className="mt-7 space-y-5">
@@ -93,7 +93,7 @@ export default function Login() {
                     <Entrada
                       id="login"
                       autoComplete="username"
-                      placeholder="exemplo@sesfa.org"
+                      placeholder="exemplo@institutoelo.org"
                       aria-invalid={!!errors.login}
                       className="h-11"
                       {...register('login', { onChange: () => setErroGeral('') })}

@@ -202,7 +202,7 @@ export default function Indicadores() {
           tabelas,
         },
         'PDF',
-        `sesfa-indicadores-${aba}-${periodo}`,
+        `elo-indicadores-${aba}-${periodo}`,
       );
       toast.success('Relatório exportado em PDF.');
     } catch {

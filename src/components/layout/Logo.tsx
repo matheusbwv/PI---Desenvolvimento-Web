@@ -1,7 +1,7 @@
 import { clsx } from 'clsx';
 import { HeartHandshake } from 'lucide-react';
 
-/** Marca do SESFA: quadrado azul + nome + "Gestão de Comunidade". */
+/** Marca do Instituto Elo: quadrado azul + nome + "Gestão de Comunidade". */
 export function Logo({ grande = false }: { grande?: boolean }) {
   return (
     <div className="flex items-center gap-2.5">
@@ -15,8 +15,8 @@ export function Logo({ grande = false }: { grande?: boolean }) {
         <HeartHandshake className={grande ? 'size-7' : 'size-3.5'} strokeWidth={2.2} />
       </span>
       <div className="leading-none">
-        <p className={clsx('font-bold tracking-tight text-brand', grande ? 'text-[40px] leading-[44px]' : 'text-[19px] leading-6')}>
-          SESFA
+        <p className={clsx('font-bold tracking-tight text-brand', grande ? 'text-[36px] leading-[40px]' : 'text-[18px] leading-6')}>
+          Instituto Elo
         </p>
         <p className={clsx('text-muted', grande ? 'mt-0.5 text-[16px]' : 'text-[11px]')}>Gestão de Comunidade</p>
       </div>

@@ -3,7 +3,7 @@ import { create } from 'zustand';
 // Guarda o token de acesso devolvido pela API e qual usuário está logado.
 // "Lembrar de mim" marcado -> localStorage (continua logado ao fechar o navegador).
 // Desmarcado -> sessionStorage (sai ao fechar a aba).
-const CHAVE = 'sesfa-sessao';
+const CHAVE = 'elo-sessao';
 
 interface Sessao {
   token: string;
@@ -12,7 +12,11 @@ interface Sessao {
 
 function lerSessao(): Sessao | null {
   try {
-    const texto = localStorage.getItem(CHAVE) ?? sessionStorage.getItem(CHAVE);
+    const texto =
+      localStorage.getItem(CHAVE) ??
+      sessionStorage.getItem(CHAVE) ??
+      localStorage.getItem('sesfa-sessao') ??
+      sessionStorage.getItem('sesfa-sessao');
     const sessao = texto ? (JSON.parse(texto) as Partial<Sessao>) : null;
     return sessao?.token && sessao.usuarioId ? { token: sessao.token, usuarioId: sessao.usuarioId } : null;
   } catch {

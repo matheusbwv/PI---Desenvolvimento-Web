@@ -142,7 +142,7 @@ async function gerarPdf(c: ConteudoRelatorio, nomeArquivo: string) {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(11);
   doc.setTextColor(15, 60, 140);
-  doc.text('SESFA · Gestão de Comunidade', 14, 14);
+  doc.text('Instituto Elo · Gestão de Comunidade', 14, 14);
   doc.setFontSize(18);
   doc.setTextColor(22, 35, 59);
   doc.text(c.titulo, 14, 24);
@@ -203,7 +203,7 @@ async function gerarXlsx(c: ConteudoRelatorio, nomeArquivo: string) {
   const { default: writeXlsxFile } = await import('write-excel-file/browser');
   type Celula = { value: string | number; fontWeight?: 'bold'; backgroundColor?: string; textColor?: string; fontSize?: number } | null;
   const linhas: Celula[][] = [
-    [{ value: `SESFA · ${c.titulo}`, fontWeight: 'bold', fontSize: 14 }],
+    [{ value: `Instituto Elo · ${c.titulo}`, fontWeight: 'bold', fontSize: 14 }],
     [{ value: `Período: ${formatarMesAno(c.periodo)}`, textColor: '#64748B' }],
     [null],
     ...c.resumo.map(([rotulo, valor]): Celula[] => [{ value: rotulo }, { value: valor, fontWeight: 'bold' }]),

@@ -231,7 +231,7 @@ function JanelaUsuario({
             value={email}
             aria-invalid={!!erros.email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="nome@sesfa.org"
+            placeholder="nome@institutoelo.org"
           />
         </Campo>
         <div className="grid gap-4 sm:grid-cols-2">

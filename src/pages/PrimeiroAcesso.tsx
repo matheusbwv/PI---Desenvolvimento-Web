@@ -55,7 +55,7 @@ export function PrimeiroAcesso({ aoConcluir }: { aoConcluir: () => void }) {
             id="pa-email"
             type="email"
             autoComplete="username"
-            placeholder="nome@sesfa.org"
+            placeholder="nome@institutoelo.org"
             className="h-11"
             aria-invalid={!!errors.email}
             {...register('email')}

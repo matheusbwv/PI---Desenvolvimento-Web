@@ -1,4 +1,4 @@
-// Modelos de dados do SESFA.
+// Modelos de dados do Instituto Elo.
 // Datas sem hora usam o formato ISO "aaaa-mm-dd"; datas com hora usam ISO completo.
 
 export type SituacaoCadastro = 'Ativo' | 'Inativo';

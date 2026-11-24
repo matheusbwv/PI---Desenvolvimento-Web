@@ -103,6 +103,7 @@ const vazio: Dados = {
 
 // A versão sem servidor guardava tudo no navegador; essa cópia antiga não é mais usada.
 try {
+  localStorage.removeItem('elo-dados');
   localStorage.removeItem('sesfa-dados');
 } catch {
   // navegador sem armazenamento
